@@ -22,6 +22,8 @@ const httpsAgent = new https.Agent({
     rejectUnauthorized: false
 });
 const privateKey = fs.readFileSync('/home/amjad/Downloads/key1.pem', 'utf8');
+
+//this api is used for connecting to ec2 machine and getting the docker images for that machine in json form.
 app.post('/execute-ssh', async(req, res) =>  {
   const ipAddress = req.body['ipAddress']
   console.log(ipAddress);
@@ -46,6 +48,7 @@ app.post('/execute-ssh', async(req, res) =>  {
   }
 });
 
+//this api is used for inspecting the container using container id.
 app.post ('/inspect-container',async(req,res)=>{
   try{
     const dockerApiUrl = `http://54.210.126.34:2375/containers/0199ded799e06b014752943ee931d33dd56b474d1c3a1bdfc3b88dbbbc8ad5b6/json`;
@@ -60,6 +63,7 @@ app.post ('/inspect-container',async(req,res)=>{
     }
 });
 
+//this api is used for checking the logs of container using container id
 app.post ('/container-logs',async(req,res)=>{
   try{
     const dockerApiUrl = `http://54.210.126.34:2375/containers/0199ded799e06b014752943ee931d33dd56b474d1c3a1bdfc3b88dbbbc8ad5b6/logs?stderr=true`;
@@ -74,6 +78,7 @@ app.post ('/container-logs',async(req,res)=>{
     }
 });
 
+//this api is used for checking the resource used by container in the form of stats
 app.post ('/container-stats',async(req,res)=>{
   try{
     const StatsApiUrl = `http://54.210.126.34:2375/containers/0199ded799e06b014752943ee931d33dd56b474d1c3a1bdfc3b88dbbbc8ad5b6/stats`;
@@ -88,6 +93,7 @@ app.post ('/container-stats',async(req,res)=>{
     }
 });
 
+//this api is used for getting the list of containers available on ec2 machine and return the containers records in json form
 app.post ('/container-list',async(req,res)=>{
   try{
     const dockerApiUrl = `http://54.210.126.34:2375/containers/json?all=true`;
@@ -102,6 +108,7 @@ app.post ('/container-list',async(req,res)=>{
     }
 });
 
+//this api is used to create a new container. reqiure some data like environment variables, port mapping. assigning network etc
 app.post('/Create-container', async (req, res) => {
   const containerData = {
     "Image": "getting-started",
@@ -132,6 +139,7 @@ app.post('/Create-container', async (req, res) => {
   }
 });
 
+//this api is used for starting a container require container id
 app.post('/start-container', async (req, res) => {
   try {
     const startContainerApi = 'http://54.210.126.34:2375/containers/0199ded799e06b014752943ee931d33dd56b474d1c3a1bdfc3b88dbbbc8ad5b6/start';
@@ -145,6 +153,7 @@ app.post('/start-container', async (req, res) => {
   }
 });
 
+//this api is used for stopping the container requiring container id
 app.post('/stop-container', async (req, res) => {
   try {
     const stopContainerApi = 'http://54.210.126.34:2375/containers/0199ded799e06b014752943ee931d33dd56b474d1c3a1bdfc3b88dbbbc8ad5b6/stop';
@@ -162,6 +171,7 @@ app.post('/stop-container', async (req, res) => {
   }
 });
 
+//this api is used for restarting a container requiring container id 
 app.post('/restart-container', async (req, res) => {
   try {
     const restartContainerApi = 'http://54.210.126.34:2375/containers/0199ded799e06b014752943ee931d33dd56b474d1c3a1bdfc3b88dbbbc8ad5b6/restart';
@@ -175,7 +185,7 @@ app.post('/restart-container', async (req, res) => {
   }
 });
 
-
+//this api is used for removing a specific container using its id
 app.post('/removing-container', async (req, res) => {
   try {
     const removeContainerApi = 'http://54.210.126.34:2375/containers/0199ded799e06b014752943ee931d33dd56b474d1c3a1bdfc3b88dbbbc8ad5b6?force=true';
@@ -188,6 +198,7 @@ app.post('/removing-container', async (req, res) => {
   }
 });
 
+//this api is used for deleteing all the stopped containers
 app.post('/delete-stopped-containers', async (req, res) => {
   try {
     const deleteContainerApi = 'http://54.210.126.34:2375/containers/prune';
@@ -200,6 +211,7 @@ app.post('/delete-stopped-containers', async (req, res) => {
   }
 });
 
+//this api is used for pausing the container
 app.post('/pause-container', async (req, res) => {
   try {
     const pauseContainerApi = 'http://54.210.126.34:2375/containers/0199ded799e06b014752943ee931d33dd56b474d1c3a1bdfc3b88dbbbc8ad5b6/pause';
@@ -217,6 +229,7 @@ app.post('/pause-container', async (req, res) => {
   }
 });
 
+//this api is used for unpausing the container
 app.post('/unpause-container', async (req, res) => {
   try {
     const unpauseContainerApi = 'http://54.210.126.34:2375/containers/0199ded799e06b014752943ee931d33dd56b474d1c3a1bdfc3b88dbbbc8ad5b6/unpause';
@@ -234,6 +247,7 @@ app.post('/unpause-container', async (req, res) => {
   }
 });
 
+//this api is used for updating the port of the container
 app.post('/update-port', async (req, res) => {
   const containerId = '87ada2bb7535ecf0e385a26aaf94f3ce9c5852beba22c814bf2a0f8275dadd73';
   const requestData = {
@@ -257,6 +271,7 @@ app.post('/update-port', async (req, res) => {
   }
 });
 
+//this api is used for creating an image using tarbar file "busybox.tar.gz"
 app.post('/initiate-docker-build', async (req, res) => {
   console.log('amjad');
   try {
@@ -289,6 +304,7 @@ app.post('/initiate-docker-build', async (req, res) => {
   }
 });
 
+//this api is used for deleting an image
 app.post('/delete-image', async (req, res) => {
   try {
     const deleteImageApi = 'http://54.210.126.34:2375/images/a416a98b71e2?force=true';
@@ -306,6 +322,7 @@ app.post('/delete-image', async (req, res) => {
   }
 });
 
+//this api is used for searching an image
 app.get ('/search-image',async(req,res)=>{
   try{
     const searchImagesApiUrl = `http://54.210.126.34:2375/images/search?term=ubuntu&limit=5`;
@@ -320,6 +337,7 @@ app.get ('/search-image',async(req,res)=>{
     }
 });
 
+//this api is used for importing an image from dockerhub
 app.post('/import-image', async (req, res) => {
   try {
     const importImagesApiUrl = `http://54.210.126.34:2375/images/create?fromImage=redis&tag=latest`;
@@ -335,6 +353,8 @@ app.post('/import-image', async (req, res) => {
   }
 });
 
+
+//this api is used for giving a tag to an image, which is first step for expoting the image to private registry on the docker hub
 app.post('/tag-image', async (req, res) => {
   try {
     const dockerHubUsername = 'amjad123ali';
@@ -367,6 +387,7 @@ app.post('/tag-image', async (req, res) => {
   }
 });
 
+//this api is used for exporting an image second step. first image must be tagged then export
 app.post('/export-image', async (req, res) => {
   const user = 'amjad123ali';
   const pass = 'dckr_pat_Y-PM-Guumhgf3pIFiFYqqroXoD0'
@@ -390,6 +411,7 @@ app.post('/export-image', async (req, res) => {
   }
 });
 
+//this api is used for pulling an image private registry 
 app.post('/pull-image', async (req, res) => {
   try {
     const pullImagesApiUrl = `http://54.210.126.34:2375/images/create?fromImage=amjad123ali/dockur_fyp&tag=busybox`;
@@ -407,6 +429,7 @@ app.post('/pull-image', async (req, res) => {
 
 
 // network
+//this api is used for getting the docker newtorks 
 app.post ('/network-list',async(req,res)=>{
   try{
     const dockerApiUrl = `http://54.210.126.34:2375/networks`;
@@ -421,6 +444,7 @@ app.post ('/network-list',async(req,res)=>{
     }
 });
 
+//this api is used for inspecting docker network
 app.post ('/inspect-network',async(req,res)=>{
   try{
     const dockerApiUrl = `http://54.210.126.34:2375/networks/amjad`;
@@ -435,6 +459,7 @@ app.post ('/inspect-network',async(req,res)=>{
     }
 });
 
+//this api is used for removing docker network
 app.post('/removing-network', async (req, res) => {
   try {
     const removeNetworkApi = 'http://54.210.126.34:2375/networks';
@@ -447,6 +472,7 @@ app.post('/removing-network', async (req, res) => {
   }
 });
 
+//this api is used for creating docker network require a name
 app.post('/Create-network', async (req, res) => {
   const networkData = {
       "Name": "amjad",
@@ -464,6 +490,7 @@ app.post('/Create-network', async (req, res) => {
   }
 });
 
+//this api is used for connecting container to a  docker network
 app.post('/Connect-container', async (req, res) => {
   const requestData = {
     Container: 'cef1516090c3',
@@ -480,6 +507,7 @@ app.post('/Connect-container', async (req, res) => {
   }
 });
 
+//this api is used for disconnecting container to a  docker network
 app.post('/Disconnect-container', async (req, res) => {
   const requestData = {
     Container: '6f0a8bc6079e',
@@ -496,6 +524,7 @@ app.post('/Disconnect-container', async (req, res) => {
   }
 });
 
+//this api is used for deleting unused docker network
 app.post('/Delete-unused-Networks', async (req, res) => {
   try {
     const DeleteUnusedNetworksApi = 'http://54.210.126.34:2375/networks/prune';
@@ -509,6 +538,7 @@ app.post('/Delete-unused-Networks', async (req, res) => {
 });
 
 //Volumes
+//this api is used for creating docker volume
 app.post('/Create-volume', async (req, res) => {
   const volumeData = {
       "Name": "abc",
@@ -525,6 +555,7 @@ app.post('/Create-volume', async (req, res) => {
   }
 });
 
+//this api is used for getting volumes created on docker 
 app.post ('/volume-list',async(req,res)=>{
   try{
     const volumeListApiUrl = `http://54.210.126.34:2375/volumes`;
@@ -539,6 +570,7 @@ app.post ('/volume-list',async(req,res)=>{
     }
 });
 
+//this api is used for inspecting  docker volume
 app.post ('/inspect-volume',async(req,res)=>{
   try{
     const dockerApiUrl = `http://54.210.126.34/volumes/abc`;
@@ -553,6 +585,7 @@ app.post ('/inspect-volume',async(req,res)=>{
     }
 });
 
+//this api is used for removing docker volume using its name
 app.post('/removing-volume', async (req, res) => {
   try {
     const removeVolumeApi = 'http://54.210.126.34:2375/volumes/abc?force=true';
@@ -565,6 +598,7 @@ app.post('/removing-volume', async (req, res) => {
   }
 });
 
+//this api is used to delete all unused volume
 app.post('/Delete-unused-volume', async (req, res) => {
   try {
     const DeleteUnusedVolumeApi = 'http://54.210.126.34:2375/volumes/prune';
